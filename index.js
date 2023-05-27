@@ -25,6 +25,7 @@ app.post('/', (req, res) => {
     const { message, user: sender, type, members } = req.body;
 
     if (type === 'message.new') {
+        console.log('Inside message.new if statement');
         members
             .filter((member) => member.user_id !== sender.id)
             .forEach(({ user }) => {

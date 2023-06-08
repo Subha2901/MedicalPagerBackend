@@ -22,30 +22,48 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-    const { message, user: sender, type, members } = req.body;
+    console.log("Post request received: ", req.body);
 
-    if (type === 'message.new') {
-        console.log('Inside message.new if statement');
-        members
-            .filter((member) => member.user_id !== sender.id)
-            .forEach(({ user }) => {
-                if (!user.online) {
-                    twilioClient.messages.create({
-                        body: `You have a new message from ${message.user.fullName} - ${message.text}`,
-                        messagingServiceSid: messagingServiceSid,
-                        to: user.phoneNumber
-                    })
-                        .then(() => console.log('Message sent!'))
-                        .catch((err) => console.log("post request send message" + err));
+    const { message, user, members } = req.body;
 
+    members.forEach((member) => {
+        if (!member.user.online) {
+            if (!member.user.online) {
+                let phoneNumber = member.user.phoneNumber;
+                if (phoneNumber.length === 10) {
+                    phoneNumber = "+91" + phoneNumber;
                 }
-            })
+                console.log(phoneNumber + typeof (phoneNumber));
+                twilioClient.messages.create({
+                    body: `You have a new message from ${user}. The message is: ${message.text}`,
+                    //from: '+15074486692',
+                    messagingServiceSid: messagingServiceSid,
+                    to: phoneNumber,
+                })
+                    .then(() => console.log('Message sent!'))
+                    .catch((err) => console.log(err));
+            } else {
+                console.log(`The user ${member.user.fullName} is already online.`);
+            }
+        });
 
-        return res.status(200).send('Message sent!');
-    }
-
-    return res.status(200).send('Not a new message request');
+    return res.status(200).send('Message sent!');
 });
+
+
+
+//twilioClient.messages.create({
+//    body: `You have a new message from` + message.text,
+//                    from: '+15074486692',
+//                    messagingServiceSid: messagingServiceSid,
+//                    to: '+919903806308'
+//                })
+//                    .then(() => console.log('Message sent!', message.sid))
+//                    .catch((err) => console.log(err));
+//        //    }
+//        //})
+
+//    return res.status(200).send('Message sent!');
 
 
 app.use('/auth', authRoutes);

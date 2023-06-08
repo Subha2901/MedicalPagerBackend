@@ -28,16 +28,17 @@ app.post('/', (req, res) => {
 
     members.forEach((member) => {
         if (!member.user.online) {
-            if (!member.user.online) {
-                let phoneNumber = member.user.phoneNumber;
-                if (phoneNumber.length === 10) {
-                    phoneNumber = "+91" + phoneNumber;
-                }
+            phoneNumber = member.user.phoneNumber;
+            if (phoneNumber.length === 10) {
+                phoneNumber = "+91" + phoneNumber;
+            }
+            else if (phoneNumber.length === 12) {
+                phoneNumber = "+" + phoneNumber;
             }
             console.log(phoneNumber + typeof (phoneNumber));
             twilioClient.messages.create({
                 body: `You have a new message from ${user}. The message is: ${message.text}`,
-                //from: '+15074486692',
+                from: '+15074486692',
                 messagingServiceSid: messagingServiceSid,
                 to: phoneNumber,
             })

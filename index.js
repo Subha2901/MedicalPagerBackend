@@ -33,19 +33,20 @@ app.post('/', (req, res) => {
                 if (phoneNumber.length === 10) {
                     phoneNumber = "+91" + phoneNumber;
                 }
-                console.log(phoneNumber + typeof (phoneNumber));
-                twilioClient.messages.create({
-                    body: `You have a new message from ${user}. The message is: ${message.text}`,
-                    //from: '+15074486692',
-                    messagingServiceSid: messagingServiceSid,
-                    to: phoneNumber,
-                })
-                    .then(() => console.log('Message sent!'))
-                    .catch((err) => console.log(err));
-            } else {
-                console.log(`The user ${member.user.fullName} is already online.`);
             }
-        });
+            console.log(phoneNumber + typeof (phoneNumber));
+            twilioClient.messages.create({
+                body: `You have a new message from ${user}. The message is: ${message.text}`,
+                //from: '+15074486692',
+                messagingServiceSid: messagingServiceSid,
+                to: phoneNumber,
+            })
+                .then(() => console.log('Message sent!'))
+                .catch((err) => console.log(err));
+        } else {
+            console.log(`The user ${member.user.fullName} is already online.`);
+        }
+    });
 
     return res.status(200).send('Message sent!');
 });
